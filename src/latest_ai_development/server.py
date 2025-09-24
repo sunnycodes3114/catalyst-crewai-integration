@@ -17,21 +17,20 @@ app.add_middleware(
 class InputData(BaseModel):
     topic: str
     chat_id: str
-    bot_user_id: str
 
 @app.post("/crew/message")
 async def run(data: InputData):
     inputs = data.dict()
 
     # Split into visible and hidden
-    visible_dict = {k: v for k, v in inputs.items() if k == "topic"}
-    hidden_dict = {k: v for k, v in inputs.items() if k != "topic"}
+    visible_dict = {"topic": data.topic}
+    hidden_dict = {"chat_id": data.chat_id}
 
     # Call your Crew
     result = LatestAiDevelopment(hidden_inputs=hidden_dict).crew().kickoff(inputs=visible_dict)
 
     return {
         "chat_id": data.chat_id,
-        "response": str(result),  # make sure it's serializable
+        "response": str(result),  # ensure serializable
         "is_bot": True
     }

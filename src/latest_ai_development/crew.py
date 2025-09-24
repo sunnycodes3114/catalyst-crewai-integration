@@ -20,46 +20,42 @@ class LatestAiDevelopment():
 	# https://docs.crewai.com/concepts/agents#agent-tools
 	def print_output(self, output: TaskOutput):
 		import requests
-		# Hasura GraphQL endpoint
-		HASURA_GRAPHQL_ENDPOINT = "https://fbjlcpshkpbwfdhhosrh.hasura.ap-south-1.nhost.run/v1/graphql"
-		# Admin secret from your Hasura/Nhost console (include the leading colon if shown)
-		HASURA_ADMIN_SECRET = ":HK'qiL5cvojcHVzucs-K+tC5H-W@hrH"
-		chat_id = self.hidden_inputs["chat_id"]
-		bot_message_content = f"{output.agent} says:\n{output.raw}"
-		bot_user_id = self.hidden_inputs["bot_user_id"]  # Provided user ID
-		mutation = """
-		mutation InsertBotMessage($chatId: uuid!, $content: String!, $userId: uuid!) {
-		insert_messages_one(object: {
-			chat_id: $chatId,
-			content: $content,
-			is_bot: true,
-			user_id: $userId
-		}) {
-			id
-			content
-			is_bot
-			user_id
-			created_at
-		}
-		}
-		"""
 
-		variables = {
-			"chatId": chat_id,
-			"content": bot_message_content,
-			"userId": bot_user_id
-		}
-
+		url = "https://fbjlcpshkpbwfdhhosrh.hasura.ap-south-1.nhost.run/v1/graphql"
 		headers = {
 			"Content-Type": "application/json",
-			"x-hasura-admin-secret": HASURA_ADMIN_SECRET
+			"x-hasura-admin-secret": ":HK'qiL5cvojcHVzucs-K+tC5H-W@hrH"
 		}
 
-		response = requests.post(
-			HASURA_GRAPHQL_ENDPOINT,
-			json={"query": mutation, "variables": variables},
-			headers=headers
-		)
+		chat_id = str(self.hidden_inputs["chat_id"])
+		content = f"{output.agent} says:\n{output.raw}"
+
+		payload = {
+			"query": """
+				mutation InsertMessage($chat_id: String!, $content: String!) {
+					insert_catalyst_message_one(
+						object: {
+							chat_id: $chat_id,
+							content: $content,
+							is_bot: true
+						}
+					) {
+						id
+						content
+					}
+				}
+			""",
+			"variables": {
+				"chat_id": chat_id,
+				"content": content
+			}
+		}
+
+		response = requests.post(url, headers=headers, json=payload)
+		print("Status:", response.status_code)
+		print("Response:", response.json())
+
+
 
 	@agent
 	def researcher(self) -> Agent:

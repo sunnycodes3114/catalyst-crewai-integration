@@ -17,12 +17,13 @@ def run():
     """
     inputs = {
         'topic': 'AI LLMs',
-        'chat_id': "59611922-0a6e-438e-bf30-2eba03a0efd5",
-        'bot_user_id': "7109d6a8-1799-4c45-b22e-45e1baba3e26"
+        'chat_id': "22259000000021375"
     }
 
     visible_dict = {k: v for k, v in inputs.items() if k == 'topic'}
     hidden_dict = {k: v for k, v in inputs.items() if k != 'topic'}
+    print("Visible inputs:", visible_dict)
+    print("Hidden inputs:", hidden_dict)
     LatestAiDevelopment(hidden_inputs=hidden_dict).crew().kickoff(inputs=visible_dict)
 
 
