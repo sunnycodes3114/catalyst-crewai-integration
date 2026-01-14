@@ -21,9 +21,9 @@ class InputData(BaseModel):
 @app.post("/crew/message")
 async def run(data: InputData):
     inputs = data.dict()
-
+    current_year = datetime.now().year
     # Split into visible and hidden
-    visible_dict = {"topic": data.topic,"year":current_year = datetime.now().year}
+    visible_dict = {"topic": data.topic,"year":current_year}
     hidden_dict = {"chat_id": data.chat_id}
 
     # Call your Crew
