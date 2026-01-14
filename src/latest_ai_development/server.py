@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from crew import LatestAiDevelopment  # import your crew class
-
+from datetime import datetime
 app = FastAPI()
 
 # Allow Netlify frontend to connect
@@ -23,7 +23,7 @@ async def run(data: InputData):
     inputs = data.dict()
 
     # Split into visible and hidden
-    visible_dict = {"topic": data.topic}
+    visible_dict = {"topic": data.topic,"year":current_year = datetime.now().year}
     hidden_dict = {"chat_id": data.chat_id}
 
     # Call your Crew
